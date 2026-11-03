@@ -1,0 +1,36 @@
+{
+	"name": "@swaptox/widget",
+	"private": false,
+	"version": "1.0.1",
+	"type": "module",
+	"description": "SwaptoX Widget - A lightweight Web3 UI & Logic components",
+	"author": "Your Name",
+	"license": "MIT",
+	"main": "./dist/swaptox-widget.js",
+	"module": "./dist/swaptox-widget.js",
+	"exports": {
+		".": {
+			"import": "./dist/swaptox-widget.js",
+			"default": "./dist/swaptox-widget.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"dev": "vite --port 3001",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"lit": "3.2.1"
+	},
+	"devDependencies": {
+		"vite": "5.4.10",
+		"terser": "5.31.0"
+	}
+}
+
+
+

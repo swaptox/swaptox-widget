@@ -1,0 +1,161 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "decodeDomain",
+		"outputs": [
+			{
+				"internalType": "bytes1",
+				"name": "fields",
+				"type": "bytes1"
+			},
+			{
+				"internalType": "string",
+				"name": "name_",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "version_",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "chainId_",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "verifyingContract_",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "salt_",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "decodeName",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "getPermitInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "tokenName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "domainName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "version",
+						"type": "string"
+					},
+					{
+						"internalType": "bytes1",
+						"name": "domainFields",
+						"type": "bytes1"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonce",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "domainSeparator",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "domainChainId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "verifyingContract",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "salt",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "chainId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "nameAvailable",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "nonceAvailable",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "domainSeparatorAvailable",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "eip712DomainAvailable",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct SwaptoXPermitReader.PermitInfo",
+				"name": "info",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

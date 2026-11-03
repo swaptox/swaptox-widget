@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#f4f7fb" />
+		<title>SwaptoX SDK Demo</title>
+		<link rel="stylesheet" href="https://cdn.swaptox.com/assets/css/work-sans.css" />
+		<style>
+			:root {
+				font-family: "Work Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+				color: #172033;
+				background: #f4f7fb;
+				font-synthesis: none;
+				text-rendering: optimizeLegibility;
+				--line: #e3e9f2;
+				--muted: #66738a;
+				--accent: #315efb;
+				--panel: rgba(255, 255, 255, 0.94);
+			}
+
+			* { box-sizing: border-box; }
+			body { margin: 0; min-width: 320px; }
+			button, input, textarea { font: inherit; }
+			button { cursor: pointer; }
+			.shell { width: min(1240px, calc(100% - 36px)); margin: 0 auto; padding: 34px 0 56px; }
+			.hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 26px; }
+			.eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+			h1 { margin: 7px 0 8px; font-size: clamp(28px, 4vw, 40px); letter-spacing: -.04em; }
+			.hero p { max-width: 720px; margin: 0; color: var(--muted); line-height: 1.65; }
+			.locale-switch { display: flex; flex: 0 0 auto; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: 0 5px 20px #1b31510a; }
+			.locale-switch button { border: 0; border-radius: 8px; padding: 8px 13px; color: var(--muted); background: transparent; font-weight: 700; }
+			.locale-switch button.active { color: #fff; background: #172033; }
+			.layout { display: grid; grid-template-columns: minmax(320px, 430px) minmax(0, 1fr); gap: 18px; align-items: start; }
+			.panel { border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 10px 34px #1b31510a; }
+			.widget-panel { padding: 20px; }
+			.panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 17px; }
+			h2 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+			.panel-heading p, .section-note { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+			.badge { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; padding: 7px 10px; border-radius: 999px; color: #137245; background: #e9f8ef; font-size: 11px; font-weight: 800; }
+			.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #26b36b; }
+			.swap-container { width: 100%; min-height: 180px; }
+			.widget-footnote { padding-top: 15px; margin-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.6; }
+			.controls { display: grid; gap: 14px; }
+			.control-card { padding: 19px; }
+			.control-card .panel-heading { margin-bottom: 15px; }
+			.control-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+			.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+			.field.full { grid-column: 1 / -1; }
+			label { color: #4d5a70; font-size: 12px; font-weight: 700; }
+			input, textarea { width: 100%; padding: 10px 11px; border: 1px solid #dce3ed; border-radius: 10px; outline: none; color: #172033; background: #fff; transition: border-color .15s, box-shadow .15s; }
+			input:focus, textarea:focus { border-color: #89a2ff; box-shadow: 0 0 0 3px #315efb14; }
+			textarea { min-height: 100px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; line-height: 1.5; }
+			.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+			.btn { min-height: 37px; padding: 8px 11px; border: 1px solid #dce3ed; border-radius: 10px; color: #344158; background: white; font-size: 12px; font-weight: 700; transition: transform .12s, border-color .12s, background .12s; }
+			.btn:hover { transform: translateY(-1px); border-color: #aab9d2; background: #f9fbff; }
+			.btn.primary { border-color: var(--accent); color: white; background: var(--accent); }
+			.btn.primary:hover { border-color: #2148d8; background: #2148d8; }
+			.btn.subtle { color: var(--accent); border-color: #d9e2ff; background: #f5f7ff; }
+			.btn.danger { color: #a23c44; border-color: #f0d6d8; background: #fff8f8; }
+			.inline-actions { display: flex; gap: 8px; align-items: center; }
+			.inline-actions input { flex: 1; min-width: 0; }
+			.events-panel { grid-column: 1 / -1; padding: 20px; }
+			.event-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin: 14px 0; }
+			.event-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+			.event-chip { padding: 6px 9px; border: 1px solid #dce5fa; border-radius: 999px; color: #3455bd; background: #f3f6ff; font-family: ui-monospace, monospace; font-size: 11px; }
+			.log-box { min-height: 135px; max-height: 360px; overflow: auto; padding: 10px; border: 1px solid #202b3d; border-radius: 13px; color: #dbe5f7; background: #111927; }
+			.log-empty { padding: 22px 12px; color: #8291a9; text-align: center; font-size: 12px; }
+			.log-entry { display: grid; grid-template-columns: 80px 112px minmax(0, 1fr); gap: 10px; padding: 9px 7px; border-bottom: 1px solid #ffffff12; font-size: 11px; line-height: 1.5; }
+			.log-entry:last-child { border-bottom: 0; }
+			.log-time { color: #8291a9; font-variant-numeric: tabular-nums; }
+			.log-name { color: #91aaff; font-family: ui-monospace, monospace; }
+			.log-payload { min-width: 0; color: #dbe5f7; white-space: pre-wrap; overflow-wrap: anywhere; }
+			.help { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+			.footer { margin-top: 17px; color: #8b96a8; text-align: center; font-size: 11px; }
+
+			@media (max-width: 860px) {
+				.layout { grid-template-columns: 1fr; }
+				.widget-panel { max-width: none; }
+				.swap-container { max-width: 460px; margin: auto; }
+				.events-panel { grid-column: auto; }
+			}
+			@media (max-width: 560px) {
+				.shell { width: min(100% - 24px, 500px); padding-top: 22px; }
+				.hero { flex-direction: column-reverse; gap: 14px; }
+				.control-grid { grid-template-columns: 1fr; }
+				.field.full { grid-column: auto; }
+				.panel, .widget-panel, .control-card, .events-panel { border-radius: 15px; }
+				.widget-panel, .control-card, .events-panel { padding: 16px; }
+				.log-entry { grid-template-columns: 1fr; gap: 3px; }
+			}
+		</style>
+	</head>
+	<body>
+		<main class="shell">
+			<header class="hero">
+				<div>
+					<div class="eyebrow">SwaptoX · Mini SDK</div>
+					<h1 data-i18n="pageTitle">SDK 交互演示</h1>
+					<p data-i18n="pageDescription">在这里体验 SwaptoX Widget 的账户、链、语言、主题和展示设置。所有事件都会记录到下方日志和浏览器控制台。</p>
+				</div>
+				<nav class="locale-switch" aria-label="Demo language">
+					<button type="button" class="active" data-locale="zh">中文</button>
+					<button type="button" data-locale="en">English</button>
+				</nav>
+			</header>
+
+			<div class="layout">
+				<section class="panel widget-panel" style="background-color: #f2f2f2f0;">
+					<div class="panel-heading">
+						<div>
+							<h2 data-i18n="widgetTitle">实时 Widget</h2>
+							<p data-i18n="widgetDescription">直接在组件中操作，可观察事件日志。</p>
+						</div>
+						<span class="badge" data-i18n="ready">运行中</span>
+					</div>
+					<div class="swap-container"></div>
+					<div class="widget-footnote" data-i18n="widgetFootnote">连接钱包、选择路由或执行交换时，事件会自动打印在页面下方。</div>
+				</section>
+
+				<div class="controls">
+					<section class="panel control-card">
+						<div class="panel-heading">
+						<div><h2 data-i18n="accountTitle">账户与网络</h2><p data-i18n="accountDescription">切换模拟账户和当前网络。</p></div>
+						</div>
+						<div class="control-grid">
+							<div class="field full">
+								<label data-i18n="accountLabel">设置钱包地址</label>
+								<div class="actions">
+									<button class="btn" id="setAddressOne" data-i18n="walletOne">设置钱包 1</button>
+									<button class="btn" id="setAddressTwo" data-i18n="walletTwo">设置钱包 2</button>
+									<button class="btn" id="clearAddress" data-i18n="disconnect">退出钱包</button>
+								</div>
+							</div>
+							<div class="field full">
+								<label data-i18n="chainLabel">切换链</label>
+								<div class="actions">
+									<button class="btn" id="chainBase" data-i18n="baseChain">Base 链</button>
+									<button class="btn" id="chainRootstock" data-i18n="rootstockChain">Rootstock 链</button>
+									<button class="btn subtle" id="getChains" data-i18n="getChains">读取支持的链</button>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="panel control-card">
+						<div class="panel-heading">
+						<div><h2 data-i18n="localeThemeTitle">语言与主题</h2><p data-i18n="localeThemeDescription">切换 Widget 语言和内置或自定义主题。</p></div>
+						</div>
+						<div class="control-grid">
+							<div class="field full">
+								<label data-i18n="languageLabel">Widget 语言</label>
+								<div class="actions">
+									<button class="btn" data-lang="zh-Hans" data-i18n="langZh">简体中文</button>
+									<button class="btn" data-lang="en" data-i18n="langEn">英语</button>
+									<button class="btn" data-lang="ja" data-i18n="langJa">日语</button>
+									<button class="btn" data-lang="ko" data-i18n="langKo">韩语</button>
+									<button class="btn subtle" data-lang="mars-speak" data-i18n="langMars">火星语</button>
+									<button class="btn subtle" id="getLangPack" data-i18n="getLangPack">读取语言包</button>
+								</div>
+							</div>
+							<div class="field full">
+								<label data-i18n="themeLabel">Widget 主题</label>
+								<div class="actions">
+									<button class="btn" data-theme="light" data-i18n="themeLight">浅色</button>
+									<button class="btn" data-theme="dark" data-i18n="themeDark">深色</button>
+									<button class="btn" data-theme="stxui" data-i18n="themeStx">STX UI</button>
+									<button class="btn subtle" data-theme="blue-light" data-i18n="themeBlueLight">蓝色浅色</button>
+									<button class="btn subtle" data-theme="blue-dark" data-i18n="themeBlueDark">蓝色深色</button>
+									<button class="btn subtle" id="getThemePack" data-i18n="getThemePack">读取主题包</button>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="panel control-card">
+						<div class="panel-heading">
+						<div><h2 data-i18n="displayTitle">组件显示选项</h2><p data-i18n="displayDescription">点击按钮在开启与关闭之间切换。</p></div>
+						</div>
+						<div class="actions">
+							<button class="btn" id="toggleMiniPrice"></button>
+							<button class="btn" id="toggleSwapButton"></button>
+							<button class="btn" id="toggleHistory"></button>
+							<button class="btn" id="toggleRecipient"></button>
+							<button class="btn" id="toggleChooseRoute"></button>
+							<button class="btn" id="toggleSlippage"></button>
+						</div>
+					</section>
+
+					<section class="panel control-card">
+						<div class="panel-heading">
+						<div><h2 data-i18n="customTitle">自定义设置</h2><p data-i18n="customDescription">调用邀请地址、钱包图标和可选代币列表接口。</p></div>
+						</div>
+						<div class="control-grid">
+							<div class="field full">
+								<label for="referralInput" data-i18n="referralLabel">邀请地址</label>
+								<div class="inline-actions"><input id="referralInput" value="0x68211b2367305774848a2ddbfb369b9900561e2d" /><button class="btn primary" id="applyReferral" data-i18n="apply">应用</button></div>
+							</div>
+							<div class="field full">
+								<label data-i18n="tokenLimitLabel">可选代币列表（Base 示例）</label>
+								<div class="actions"><button class="btn" id="applyTokenLimit" data-i18n="applyTokenLimit">应用 Base 示例列表</button><button class="btn" id="clearTokenLimit" data-i18n="clearTokenLimit">清除限制</button></div>
+							</div>
+						</div>
+					</section>
+
+					<section class="panel control-card">
+						<div class="panel-heading">
+						<div><h2 data-i18n="helpersTitle">其他 SDK 接口</h2><p data-i18n="helpersDescription">读取配置包、应用路由数据，或重建 Widget。</p></div>
+						</div>
+						<div class="control-grid">
+							<div class="field full">
+								<label for="routeDataInput" data-i18n="routeLabel">路由数据 JSON</label>
+								<textarea id="routeDataInput" spellcheck="false" data-i18n-placeholder="routePlaceholder" placeholder="粘贴 routes 事件中的一个路由对象"></textarea>
+								<p class="help" data-i18n="routeHelp">从 routes 事件日志中复制一个路由对象，再粘贴到这里调用 setRoute。</p>
+								<div class="actions"><button class="btn primary" id="applyRoute" data-i18n="setRoute">调用 setRoute</button><button class="btn" id="resetWidget" data-i18n="destroyRecreate">销毁并重建 Widget</button></div>
+							</div>
+						</div>
+					</section>
+				</div>
+
+				<section class="panel events-panel">
+					<div class="panel-heading">
+						<div><h2 data-i18n="eventsTitle">事件监听与日志</h2><p data-i18n="eventsDescription">所有 SDK 事件均已注册监听，回调只负责打印事件和数据。</p></div>
+						<span class="badge" id="eventStatus">全部监听中</span>
+					</div>
+					<div class="event-tools">
+						<div class="event-chips" aria-label="Listened SDK events">
+							<span class="event-chip">connect</span><span class="event-chip">swap</span><span class="event-chip">approve</span><span class="event-chip">permit</span><span class="event-chip">routes</span><span class="event-chip">loading</span><span class="event-chip">choose-route</span>
+						</div>
+						<div class="actions">
+							<button class="btn subtle" id="toggleSwapListener" data-i18n="removeSwapListener">移除 swap 监听</button>
+							<button class="btn" id="simulateSwap" data-i18n="simulateSwap">模拟 swap 事件</button>
+							<button class="btn" id="simulateApprove" data-i18n="simulateApprove">模拟 approve 事件</button>
+							<button class="btn" id="simulatePermit" data-i18n="simulatePermit">模拟 permit 事件</button>
+							<button class="btn danger" id="clearLog" data-i18n="clearLog">清空日志</button>
+						</div>
+					</div>
+					<div class="log-box" id="eventLog" aria-live="polite"><div class="log-empty" data-i18n="waitingEvents">等待 SDK 事件……</div></div>
+				</section>
+			</div>
+			<div class="footer" data-i18n="footer">SwaptoX Mini SDK · Demo</div>
+		</main>
+
+		<script type="module">
+			import { createWidget } from './src/index.js';
+
+			const messages = {
+				zh: {
+					pageTitle: 'SDK 交互演示',
+					pageDescription: '在这里体验 SwaptoX Widget 的账户、链、语言、主题和展示设置。所有事件都会记录到下方日志和浏览器控制台。',
+					widgetTitle: '实时 Widget', widgetDescription: '直接在组件中操作，可观察事件日志。', ready: '运行中',
+					widgetFootnote: '连接钱包、选择路由或执行交换时，事件会自动打印在页面下方。',
+					accountTitle: '账户与网络', accountDescription: '切换模拟账户和当前网络。', accountLabel: '设置钱包地址', walletOne: '设置钱包 1', walletTwo: '设置钱包 2', disconnect: '退出钱包', chainLabel: '切换链', baseChain: 'Base 链', rootstockChain: 'Rootstock 链', getChains: '读取支持的链',
+					localeThemeTitle: '语言与主题', localeThemeDescription: '切换 Widget 语言和内置或自定义主题。', languageLabel: 'Widget 语言', langZh: '简体中文', langEn: '英语', langJa: '日语', langKo: '韩语', langMars: '火星语', getLangPack: '读取语言包', themeLabel: 'Widget 主题', themeLight: '浅色', themeDark: '深色', themeStx: 'STX UI', themeBlueLight: '蓝色浅色', themeBlueDark: '蓝色深色', getThemePack: '读取主题包',
+					displayTitle: '组件显示选项', displayDescription: '点击按钮在开启与关闭之间切换。', customTitle: '自定义设置', customDescription: '调用邀请地址、钱包图标和可选代币列表接口。', referralLabel: '邀请地址', logoLabel: '钱包 Logo URL', apply: '应用', clearLogo: '清除', tokenLimitLabel: '可选代币列表（Base 示例）', applyTokenLimit: '应用 Base 示例列表', clearTokenLimit: '清除限制',
+					helpersTitle: '其他 SDK 接口', helpersDescription: '读取配置包、应用路由数据，或重建 Widget。', routeLabel: '路由数据 JSON', routePlaceholder: '粘贴 routes 事件中的一个路由对象', routeHelp: '从 routes 事件日志中复制一个路由对象，再粘贴到这里调用 setRoute。', setRoute: '调用 setRoute', destroyRecreate: '销毁并重建 Widget',
+					eventsTitle: '事件监听与日志', eventsDescription: '所有 SDK 事件均已注册监听，回调只负责打印事件和数据。', allListening: '全部监听中', swapPaused: 'swap 已移除', removeSwapListener: '移除 swap 监听', restoreSwapListener: '恢复 swap 监听', simulateSwap: '模拟 swap 事件', simulateApprove: '模拟 approve 事件', simulatePermit: '模拟 permit 事件', clearLog: '清空日志', waitingEvents: '等待 SDK 事件……',
+					footer: 'SwaptoX Mini SDK · 演示页', shown: '开启', hidden: '关闭', top: '上方', bottom: '下方',
+					toggles: { mini: '迷你价格卡片', swap: 'Swap 按钮', history: '历史记录图标', recipient: '自定义 Recipient', route: '路由选择', slippage: '滑点位置' },
+					invalidRoute: '请粘贴一个有效的路由 JSON 对象。', routeError: '路由 JSON 解析失败：', referralError: '请填写邀请地址。', logoError: '请填写钱包 Logo URL。',
+				},
+				en: {
+					pageTitle: 'SDK Playground',
+					pageDescription: 'Explore account, chain, language, theme, and display settings for the SwaptoX Widget. SDK events appear in the log below and in the browser console.',
+					widgetTitle: 'Live Widget', widgetDescription: 'Interact with the widget and watch its event log.', ready: 'Running',
+					widgetFootnote: 'Connecting a wallet, choosing a route, and swapping will print events below.',
+					accountTitle: 'Account & Network', accountDescription: 'Switch the demo account and active network.', accountLabel: 'Set wallet address', walletOne: 'Set wallet 1', walletTwo: 'Set wallet 2', disconnect: 'Disconnect', chainLabel: 'Switch chain', baseChain: 'Base chain', rootstockChain: 'Rootstock chain', getChains: 'Get supported chains',
+					localeThemeTitle: 'Language & Theme', localeThemeDescription: 'Change the widget language and built-in or custom theme.', languageLabel: 'Widget language', langZh: 'Simplified Chinese', langEn: 'English', langJa: 'Japanese', langKo: 'Korean', langMars: 'Mars Speak', getLangPack: 'Get language pack', themeLabel: 'Widget theme', themeLight: 'Light', themeDark: 'Dark', themeStx: 'STX UI', themeBlueLight: 'Blue Light', themeBlueDark: 'Blue Dark', getThemePack: 'Get theme pack',
+					displayTitle: 'Widget Display Options', displayDescription: 'Click a control to toggle it on or off.', customTitle: 'Custom Settings', customDescription: 'Set the referral address, wallet logo, and optional token list.', referralLabel: 'Referral address', logoLabel: 'Wallet logo URL', apply: 'Apply', clearLogo: 'Clear logo', tokenLimitLabel: 'Optional token list (Base example)', applyTokenLimit: 'Apply Base example list', clearTokenLimit: 'Clear token limits',
+					helpersTitle: 'Other SDK Methods', helpersDescription: 'Read config packs, apply route data, or recreate the widget.', routeLabel: 'Route data JSON', routePlaceholder: 'Paste one route object from the routes event payload', routeHelp: 'Copy one route object from the routes event log, then paste it here to call setRoute.', setRoute: 'Call setRoute', destroyRecreate: 'Destroy & recreate widget',
+					eventsTitle: 'Event Listeners & Log', eventsDescription: 'All SDK events are subscribed; each callback only prints the event and its data.', allListening: 'All listening', swapPaused: 'swap removed', removeSwapListener: 'Remove swap listener', restoreSwapListener: 'Restore swap listener', simulateSwap: 'Simulate swap event', simulateApprove: 'Simulate approve event', simulatePermit: 'Simulate permit event', clearLog: 'Clear log', waitingEvents: 'Waiting for SDK events…',
+					footer: 'SwaptoX Mini SDK · Demo', shown: 'ON', hidden: 'OFF', top: 'Top', bottom: 'Bottom',
+					toggles: { mini: 'Mini price card', swap: 'Swap button', history: 'History icon', recipient: 'Custom recipient', route: 'Route selection', slippage: 'Slippage position' },
+					invalidRoute: 'Paste a valid route JSON object.', routeError: 'Could not parse route JSON: ', referralError: 'Enter a referral address.', logoError: 'Enter a wallet logo URL.',
+				}
+			};
+
+			const widgetConfig = {
+				container: '.swap-container',
+				referral: '0x68211b2367305774848a2ddbfb369b9900561e2d',
+				chain: 'base',
+				lang: 'zh-Hans',
+				isUpdateHtmlLang: true,
+				theme: 'light',
+				userAddress: '',
+				languagePack: {
+					'mars-speak': {
+						fallback: 'en',
+						data: { swap: '👽💱👽', 'connect-wallet': '😄🛜👉💰️💼' }
+					}
+				},
+				themePack: {
+					'blue-light': {
+						fallback: 'light',
+						data: {
+							'--stxui-font-family': "'Work Sans', 'Inter var', sans-serif",
+							'--stxui-theme-color': '#007aff', '--stxui-theme-focus-color': '#007aff80',
+							'--stxui-theme-icon-color': '#007aff', '--stxui-button-disabled-primary': '#007aff99',
+							'--stxui-theme-button-primary-text-color': '#eee', '--stxui-swaptox-routes-choose-border': '#49a0ffd1'
+						}
+					},
+					'blue-dark': {
+						fallback: 'dark',
+						data: {
+							'--stxui-font-family': "'Work Sans', 'Inter var', sans-serif",
+							'--stxui-theme-color': '#007aff', '--stxui-theme-focus-color': '#007aff80',
+							'--stxui-theme-icon-color': '#007aff', '--stxui-button-disabled-primary': '#007aff99',
+							'--stxui-theme-button-primary-text-color': '#eee', '--stxui-swaptox-routes-choose-border': '#00479580',
+							'--stxui-token-select-input-tag-text': '#55a6ff'
+						}
+					}
+				}
+			};
+
+			const listenedEvents = ['connect', 'swap', 'approve', 'permit', 'routes', 'loading', 'choose-route'];
+			const state = {
+				locale: 'zh',
+				disabledMiniPriceCard: false,
+				swapButton: true,
+				disabledHistoryIcon: false,
+				disabledCustomRecipient: false,
+				disabledChooseRoute: false,
+				slippagLayout: 'top',
+				swapListenerEnabled: true,
+			};
+			let instance;
+			let eventListeners = {};
+
+			function t(key) {
+				return messages[state.locale][key];
+			}
+
+			function applyTranslations() {
+				document.documentElement.lang = state.locale === 'zh' ? 'zh-Hans' : 'en';
+				document.querySelectorAll('[data-i18n]').forEach((element) => {
+					const key = element.dataset.i18n;
+					if (t(key)) element.textContent = t(key);
+				});
+				document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
+					const key = element.dataset.i18nPlaceholder;
+					if (t(key)) element.placeholder = t(key);
+				});
+				document.querySelectorAll('[data-locale]').forEach((button) => {
+					button.classList.toggle('active', button.dataset.locale === state.locale);
+				});
+				updateToggleLabels();
+				updateEventControls();
+			}
+
+			function updateToggleLabels() {
+				const labels = t('toggles');
+				const on = t('shown');
+				const off = t('hidden');
+				document.getElementById('toggleMiniPrice').textContent = `${labels.mini}: ${state.disabledMiniPriceCard ? off : on}`;
+				document.getElementById('toggleSwapButton').textContent = `${labels.swap}: ${state.swapButton ? on : off}`;
+				document.getElementById('toggleHistory').textContent = `${labels.history}: ${state.disabledHistoryIcon ? off : on}`;
+				document.getElementById('toggleRecipient').textContent = `${labels.recipient}: ${state.disabledCustomRecipient ? off : on}`;
+				document.getElementById('toggleChooseRoute').textContent = `${labels.route}: ${state.disabledChooseRoute ? off : on}`;
+				document.getElementById('toggleSlippage').textContent = `${labels.slippage}: ${state.slippagLayout === 'top' ? t('top') : t('bottom')}`;
+			}
+
+			function updateEventControls() {
+				const status = document.getElementById('eventStatus');
+				status.textContent = state.swapListenerEnabled ? t('allListening') : t('swapPaused');
+				const toggleButton = document.getElementById('toggleSwapListener');
+				toggleButton.textContent = state.swapListenerEnabled ? t('removeSwapListener') : t('restoreSwapListener');
+			}
+
+			function serialize(value) {
+				try {
+					return JSON.stringify(value, (_key, entry) => typeof entry === 'bigint' ? entry.toString() : entry, 2) ?? String(value);
+				} catch (error) {
+					return String(value);
+				}
+			}
+
+			function printEvent(eventName, args) {
+				const payload = args.length === 1 ? args[0] : args;
+				console.log(`[SwaptoX event] ${eventName}`, payload);
+				const log = document.getElementById('eventLog');
+				log.querySelector('.log-empty')?.remove();
+				const entry = document.createElement('div');
+				entry.className = 'log-entry';
+				const time = document.createElement('span');
+				time.className = 'log-time';
+				time.textContent = new Intl.DateTimeFormat(state.locale === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date());
+				const name = document.createElement('span');
+				name.className = 'log-name';
+				name.textContent = eventName;
+				const data = document.createElement('span');
+				data.className = 'log-payload';
+				data.textContent = serialize(payload);
+				entry.append(time, name, data);
+				log.prepend(entry);
+				while (log.querySelectorAll('.log-entry').length > 80) log.lastElementChild.remove();
+			}
+
+			function attachEventListeners() {
+				eventListeners = {};
+				listenedEvents.forEach((eventName) => {
+					const callback = (...args) => printEvent(eventName, args);
+					eventListeners[eventName] = callback;
+					instance.on(eventName, callback);
+				});
+				state.swapListenerEnabled = true;
+			}
+
+			function initializeWidget() {
+				instance = createWidget(widgetConfig);
+				attachEventListeners();
+				instance.setDisabledMiniPriceCard(state.disabledMiniPriceCard);
+				instance.setSwapButton(state.swapButton);
+				instance.setDisabledHistoryIcon(state.disabledHistoryIcon);
+				instance.setDisabledCustomRecipient(state.disabledCustomRecipient);
+				instance.setDisabledChooseRoute(state.disabledChooseRoute);
+				instance.setSlippagLayout(state.slippagLayout);
+				applyTranslations();
+			}
+
+			document.querySelectorAll('[data-locale]').forEach((button) => {
+				button.addEventListener('click', () => {
+					state.locale = button.dataset.locale;
+					applyTranslations();
+				});
+			});
+
+			document.getElementById('setAddressOne').addEventListener('click', () => instance.setUserAddress('0x68211b2367305774848a2ddbfb369b9900561e2d'));
+			document.getElementById('setAddressTwo').addEventListener('click', () => instance.setUserAddress('0xd4cE05008e849EF096e02D806d0333A0B7e8350f'));
+			document.getElementById('clearAddress').addEventListener('click', () => instance.setUserAddress(''));
+			document.getElementById('chainBase').addEventListener('click', () => instance.setChain('base'));
+			document.getElementById('chainRootstock').addEventListener('click', () => instance.setChain('rootstock'));
+			document.getElementById('getChains').addEventListener('click', () => console.log('[SDK getChain]', instance.getChain()));
+
+			document.querySelectorAll('[data-lang]').forEach((button) => button.addEventListener('click', () => instance.setLang(button.dataset.lang)));
+			document.getElementById('getLangPack').addEventListener('click', () => console.log('[SDK getLangPack]', instance.getLangPack()));
+			document.querySelectorAll('[data-theme]').forEach((button) => button.addEventListener('click', () => instance.setTheme(button.dataset.theme)));
+			document.getElementById('getThemePack').addEventListener('click', () => console.log('[SDK getThemePack]', instance.getThemePack()));
+
+			document.getElementById('toggleMiniPrice').addEventListener('click', () => {
+				state.disabledMiniPriceCard = !state.disabledMiniPriceCard;
+				instance.setDisabledMiniPriceCard(state.disabledMiniPriceCard);
+				updateToggleLabels();
+			});
+			document.getElementById('toggleSwapButton').addEventListener('click', () => {
+				state.swapButton = !state.swapButton;
+				instance.setSwapButton(state.swapButton);
+				updateToggleLabels();
+			});
+			document.getElementById('toggleHistory').addEventListener('click', () => {
+				state.disabledHistoryIcon = !state.disabledHistoryIcon;
+				instance.setDisabledHistoryIcon(state.disabledHistoryIcon);
+				updateToggleLabels();
+			});
+			document.getElementById('toggleRecipient').addEventListener('click', () => {
+				state.disabledCustomRecipient = !state.disabledCustomRecipient;
+				instance.setDisabledCustomRecipient(state.disabledCustomRecipient);
+				updateToggleLabels();
+			});
+			document.getElementById('toggleChooseRoute').addEventListener('click', () => {
+				state.disabledChooseRoute = !state.disabledChooseRoute;
+				instance.setDisabledChooseRoute(state.disabledChooseRoute);
+				updateToggleLabels();
+			});
+			document.getElementById('toggleSlippage').addEventListener('click', () => {
+				state.slippagLayout = state.slippagLayout === 'top' ? 'bottom' : 'top';
+				instance.setSlippagLayout(state.slippagLayout);
+				updateToggleLabels();
+			});
+
+			document.getElementById('applyReferral').addEventListener('click', () => {
+				const referral = document.getElementById('referralInput').value.trim();
+				if (!referral) return alert(t('referralError'));
+				instance.setReferral(referral);
+			});
+			document.getElementById('applyTokenLimit').addEventListener('click', () => {
+				instance.setChain('base');
+				instance.setLimitOptionalToken({
+					base: {
+						defaultTokenIn: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+						disabledTokenIn: false,
+						defaultTokenOut: '0xcb327b99ff831bf8223cced12b1338ff3aa322ff',
+						disabledTokenOut: true,
+						limitOptionalList: [
+							'0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+							'0x50c5725949a6f0c72e6c4a641f24049a917db0cb',
+							'0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+							'0xfde4c96c8593536e31f229ea8f37b2ada2699bb2',
+							'0xdbfefd2e8460a6ee4955a68582f85708baea60a3',
+							'0x2416092f143378750bb29b79ed961ab195cceea5',
+							'0x236aa50979d5f3de3bd1eeb40e81137f22ab794b',
+							'0xcb327b99ff831bf8223cced12b1338ff3aa322ff',
+							'0x2efac0a597a37050aafcf4bec627249d533dd9f8',
+							'0x8f6eb25ab4cd2f8f064f7da5e35136d4ec600b4f'
+						]
+					}
+				});
+			});
+			document.getElementById('clearTokenLimit').addEventListener('click', () => instance.setLimitOptionalToken({}));
+
+			document.getElementById('applyRoute').addEventListener('click', () => {
+				const rawRoute = document.getElementById('routeDataInput').value.trim();
+				if (!rawRoute) return alert(t('invalidRoute'));
+				try {
+					const route = JSON.parse(rawRoute);
+					if (!route || Array.isArray(route) || typeof route !== 'object') return alert(t('invalidRoute'));
+					instance.setRoute(route);
+				} catch (error) {
+					alert(`${t('routeError')}${error.message}`);
+				}
+			});
+			document.getElementById('resetWidget').addEventListener('click', () => {
+				instance.destroy();
+				state.disabledMiniPriceCard = false;
+				state.swapButton = true;
+				state.disabledHistoryIcon = false;
+				state.disabledCustomRecipient = false;
+				state.disabledChooseRoute = false;
+				state.slippagLayout = 'top';
+				initializeWidget();
+			});
+
+			document.getElementById('toggleSwapListener').addEventListener('click', () => {
+				if (state.swapListenerEnabled) {
+					instance.off('swap', eventListeners.swap);
+					state.swapListenerEnabled = false;
+				} else {
+					eventListeners.swap = (...args) => printEvent('swap', args);
+					instance.on('swap', eventListeners.swap);
+					state.swapListenerEnabled = true;
+				}
+				updateEventControls();
+			});
+			document.getElementById('simulateSwap').addEventListener('click', () => instance.emitSwap({ source: 'demo', status: 'simulated' }));
+			document.getElementById('simulateApprove').addEventListener('click', () => instance.emitApprove({ source: 'demo', status: 'simulated' }));
+			document.getElementById('simulatePermit').addEventListener('click', () => instance.emitPermit({ source: 'demo', status: 'simulated' }));
+			document.getElementById('clearLog').addEventListener('click', () => {
+				document.getElementById('eventLog').replaceChildren(Object.assign(document.createElement('div'), { className: 'log-empty', textContent: t('waitingEvents') }));
+			});
+
+			initializeWidget();
+		</script>
+	</body>
+</html>
