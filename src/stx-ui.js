@@ -1097,4 +1097,13 @@ npm publish --access public
 
 
 
+
+
+git add .
+git commit -m "Update Widget SDK"
+git push
+
+
+
+
 */

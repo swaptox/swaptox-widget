@@ -1,17 +1,17 @@
 {
 	"name": "@swaptox/widget",
 	"private": false,
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"type": "module",
 	"description": "SwaptoX Widget - A lightweight Web3 UI & Logic components",
 	"author": "Your Name",
 	"license": "MIT",
 	"main": "./dist/swaptox-widget.js",
 	"module": "./dist/swaptox-widget.js",
-	"types": "./dist/swaptox-widget.d.ts",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/swaptox-widget.d.ts",
+			"types": "./dist/index.d.ts",
 			"import": "./dist/swaptox-widget.js",
 			"default": "./dist/swaptox-widget.js"
 		}
@@ -22,7 +22,7 @@
 	],
 	"scripts": {
 		"dev": "vite --port 3001",
-		"build": "vite build && node -e \"require('fs').copyFileSync('swaptox-widget.d.ts', 'dist/swaptox-widget.d.ts')\"",
+		"build": "vite build && node -e \"require('fs').copyFileSync('index.d.ts', 'dist/index.d.ts')\"",
 		"preview": "vite preview"
 	},
 	"dependencies": {
