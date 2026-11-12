@@ -112,7 +112,7 @@ export class ComDappRoute extends LitElement {
 		.bg9{right: 64px;}
 		.bg10{right: 72px;}
 		.bgid{
-			display: var(--stxui-route-is-loading);
+			display: var(--stxui-route-is-loading, none);
 		}
 		
 		
@@ -128,7 +128,7 @@ export class ComDappRoute extends LitElement {
 		
 		
 		.jiazai-body{
-			display: var(--stxui-route-is-loading);
+			display: var(--stxui-route-is-loading, none);
 			position: absolute;
 			top: 1px;
 			left: 0px;
@@ -182,7 +182,7 @@ export class ComDappRoute extends LitElement {
 					<div class="ly-dh jiazai-bg bg${imgArr.length} bgid"></div>
 				`}
 				
-				<div class="content-flex-layout" style="column-gap:2px;display: var(--stxui-icon-switch-token-open);">
+				<div class="content-flex-layout" style="column-gap:2px;display: var(--stxui-icon-switch-token-open, flex);">
 				
 					${imgArr.map(obj => html`
 						<div class="ly-dh dapp-mini-logo logo${obj.index} logoid">
@@ -204,7 +204,7 @@ export class ComDappRoute extends LitElement {
 					`:``}
 					
 				</div>
-				<div style="display:var(--stxui-icon-switch-token-load);width:100px;"></div>
+				<div style="display:var(--stxui-icon-switch-token-load, none);width:100px;"></div>
 				
 				
 				<div class="jiazai-body skeleton-css"></div>

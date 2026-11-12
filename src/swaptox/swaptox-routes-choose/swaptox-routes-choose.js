@@ -39,11 +39,22 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		}, 1100);
 	}
 	
+	
+	
+	
 	async _getProtocol(){
 		if(!this._protocol||!this._protocol.obj){
 			this._protocol = await getProtocol();
 		}
 	}
+	
+	firstUpdated() {
+		sdkStore.setRoutes(undefined, false);
+		sdkStore.setErrRoute(undefined, false);
+	}
+	
+	
+	
 
 
 	static styles = css`
@@ -205,7 +216,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 			}
 		}
 		
-		
+		.swaptox-full{}
 		@media (max-width: 520px) {
 			.dubu-ximxi{
 				display: none;
@@ -219,6 +230,14 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 			.xuanfu-nav-dibu{
 				display: block;
 			}
+			.swaptox-full{
+				border-radius: 0px;
+				border-right-width:0px;
+				border-left-width:0px;
+				border-top-width:0px;
+				/*width: 100%;
+				min-width: 100%;*/
+			}
 		}
 		
 		
@@ -227,7 +246,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		
 		
 		.output-text-load-skeleton-item{
-			display: var(--stxui-icon-switch-token-load);
+			display: var(--stxui-icon-switch-token-load, none);
 			position: absolute;
 			z-index: 5;
 			top: 0; right: 0; bottom: 0; left: 0;
@@ -247,7 +266,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		
 		
 		.output-text-load-skeleton{
-			display: var(--stxui-icon-switch-token-load);
+			display: var(--stxui-icon-switch-token-load, none);
 			position: absolute;
 			z-index: 5;
 			top: 0; right: 0; bottom: 0; left: 0;
@@ -264,7 +283,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 			border-radius: 100px;
 		}
 		.output-text-load-skeleton-sj{
-			display: var(--stxui-icon-switch-token-load);
+			display: var(--stxui-icon-switch-token-load, none);
 			position: absolute;
 			z-index: 5;
 			top: 0; right: 0; bottom: 0; left: 0;
@@ -307,12 +326,12 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		
 		if(!routes){
 			return html`
-				<div class="swaptox-routes-choose gonggongcss-ss" style="overflow-x: clip;padding-left: 15px;padding-right: 15px;${this.styles}">
+				<div class="swaptox-routes-choose gonggongcss-ss ${sdkStore.smallScreenCardFull?'swaptox-full':''}" style="overflow-x: clip;padding-left: 15px;padding-right: 15px;${this.styles}">
 					<div class="swaptox-routes-header" style="">
 						<span class="routes-choose-title" style="font-size:17px;">${$t['route']}</span>
 					</div>
 					<div style="position: relative;">
-						<div style="opacity:var(--stxui-icon-arrow-loading-hide);height:343px;" class="null-not-item-body not-data-or-err">
+						<div style="opacity:var(--stxui-icon-arrow-loading-hide, 1);height:343px;" class="null-not-item-body not-data-or-err">
 						
 							<div style="height:250px;"></div>
 							<div class="get-route-zhuti">${$t['get-better-swap-output']}</div>
@@ -322,7 +341,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 						</div>
 						
 						
-						<div style="opacity:var(--stxui-icon-arrow-loading-hide);position:absolute;inset:0px;z-index:1;top:20px;">
+						<div style="opacity:var(--stxui-icon-arrow-loading-hide, 1);position:absolute;inset:0px;z-index:1;top:20px;">
 							<stxcom-home-showcase
 							.protocol=${this._protocol&&this._protocol.arr?this._protocol.arr:[]} 
 							.theme="${sdkStore?.theme==='dark'?'dark':''}"></stxcom-home-showcase>
@@ -334,7 +353,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 					<div style="height:15px;"></div>
 				</div>
 				
-				<div style="opacity:var(--stxui-icon-arrow-loading-hide);position:absolute;inset:0px;z-index:2;top:45px;pointer-events:none;">
+				<div style="opacity:var(--stxui-icon-arrow-loading-hide, 1);position:absolute;inset:0px;z-index:2;top:45px;pointer-events:none;">
 					<stxcom-home-tokens-bg .theme="${sdkStore?.theme==='dark'?'dark':''}"></stxcom-home-tokens-bg>
 				</div>
 				
@@ -349,12 +368,12 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		
 		if(routes&&routes.length===0){
 			return html`
-				<div class="swaptox-routes-choose gonggongcss-ss" style="padding-left: 15px;padding-right: 15px;${this.styles}">
+				<div class="swaptox-routes-choose gonggongcss-ss ${sdkStore.smallScreenCardFull?'swaptox-full':''}" style="padding-left: 15px;padding-right: 15px;${this.styles}">
 					<div class="swaptox-routes-header">
 						<span class="routes-choose-title" style="font-size:17px;">${$t['route']}</span>
 					</div>
 					<div style="position: relative;">
-						<div style="opacity:var(--stxui-icon-arrow-loading-hide);" class="null-not-item-body not-data-or-err">
+						<div style="opacity:var(--stxui-icon-arrow-loading-hide, 1);" class="null-not-item-body not-data-or-err">
 						
 							${errRoute&&errRoute?.code==='NO_ROUTE'?html`
 								<svg t="1792610134355" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4663" width="60" height="60"><path d="M747.008 579.925333l169.258667-169.301333c73.045333-73.045333 62.208-199.808-20.906667-282.88-83.029333-83.072-209.792-93.909333-282.88-20.864l-169.258667 169.301333c-15.573333 15.573333-13.866667 42.538667 3.84 60.202667 17.664 17.664 44.629333 19.370667 60.16 3.84l169.344-169.301333c40.490667-40.533333 113.066667-36.096 162.432 13.226666 49.322667 49.322667 53.76 121.984 13.226667 162.474667l-169.258667 169.258667c-15.573333 15.573333-13.866667 42.538667 3.84 60.245333 17.621333 17.664 44.586667 19.370667 60.16 3.797333z m1.877333-305.664a42.666667 42.666667 0 0 1 0 60.373334l-90.496 90.453333a42.666667 42.666667 0 0 1-60.373333-60.288l90.538667-90.538667a42.666667 42.666667 0 0 1 60.330666 0z m-324.181333 324.181334a42.666667 42.666667 0 0 1 0 60.373333l-90.538667 90.453333a42.666667 42.666667 0 0 1-60.330666-60.288l90.538666-90.538666a42.666667 42.666667 0 0 1 60.330667 0z m151.381333 89.173333c17.664 17.664 19.370667 44.629333 3.84 60.202667l-169.301333 169.301333c-73.088 73.045333-199.850667 62.165333-282.88-20.906667-83.072-83.029333-93.952-209.792-20.906667-282.88l169.301334-169.258666c15.573333-15.573333 42.538667-13.866667 60.245333 3.84 17.664 17.664 19.370667 44.629333 3.797333 60.16l-169.301333 169.301333c-40.490667 40.533333-36.053333 113.152 13.226667 162.474667 49.365333 49.322667 121.984 53.76 162.474666 13.226666l169.301334-169.301333c15.573333-15.530667 42.538667-13.866667 60.202666 3.84zM156.074667 216.874667l60.330666-60.330667 650.666667 650.581333-60.373333 60.373334L156.074667 216.832z" p-id="4664" fill="#999999"></path></svg>
@@ -394,7 +413,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 		
 		
 		return html`
-			<div class="swaptox-routes-choose gonggongcss-ss" style="${this.styles}">
+			<div class="swaptox-routes-choose gonggongcss-ss ${sdkStore.smallScreenCardFull?'swaptox-full':''}" style="${this.styles}">
 				
 				<div class="swaptox-routes-header" style="padding-left: 15px;padding-right: 15px;">
 					<span class="routes-choose-title" style="font-size:17px;">${$t['route']}</span>
@@ -408,7 +427,7 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 						<div style="position:relative;height:84px;flex:1;">
 						
 							<div @click=${()=>{this._selectedRoute(item)}} 
-							style="padding: 12px 15px;padding-top: 15px;padding-bottom: 10px;opacity:var(--stxui-icon-arrow-loading-hide);"
+							style="padding: 12px 15px;padding-top: 15px;padding-bottom: 10px;opacity:var(--stxui-icon-arrow-loading-hide, 1);"
 							class="routes-choose-bg-border ${item.selected?'selected-route':''}">
 								
 								
@@ -485,12 +504,12 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 				<div style="height:15px;"></div>
 				<div class="dubu-ximxi">
 					<div style="flex:1;position:relative;">
-						<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide);font-size:15px;line-height:22px;"
+						<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide, 1);font-size:15px;line-height:22px;"
 						>${$t['expected-output']}: 
 							<span style="white-space:nowrap;color:var(--stxui-swaptox-routes-choose-minimum-received-text);">${this._getAmountOut(sdkStore?.selectedRoute?.amountOut)}</span>
 							<span style="white-space:nowrap;color:#999;">${symbol}</span>
 						</div>
-						<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide);font-size:15px;line-height:22px;"
+						<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide, 1);font-size:15px;line-height:22px;"
 						>${$t['minimum-received']}: 
 							<span style="white-space:nowrap;color:var(--stxui-swaptox-routes-choose-minimum-received-text);">${this._getAmountMinOut(sdkStore?.selectedRoute?.amountOut)}</span>
 							<span style="white-space:nowrap;color:#999;">${symbol}</span>
@@ -515,12 +534,12 @@ export class SwaptoxRoutesChoose extends StoreMixin(LitElement) {
 			
 			<div class="xuanfu-nav-dibu gonggongcss-ss">
 				<div style="position:relative;">
-					<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide);font-size:15px;line-height:22px;"
+					<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide, 1);font-size:15px;line-height:22px;"
 					>${$t['expected-output']}: 
 						<span style="white-space:nowrap;color:var(--stxui-swaptox-routes-choose-minimum-received-text);">${this._getAmountOut(sdkStore?.selectedRoute?.amountOut)}</span>
 						<span style="white-space:nowrap;color:#999;">${symbol}</span>
 					</div>
-					<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide);font-size:15px;line-height:22px;"
+					<div class="routes-choose-title" style="opacity:var(--stxui-icon-arrow-loading-hide, 1);font-size:15px;line-height:22px;"
 					>${$t['minimum-received']}: 
 						<span style="white-space:nowrap;color:var(--stxui-swaptox-routes-choose-minimum-received-text);">${this._getAmountMinOut(sdkStore?.selectedRoute?.amountOut)}</span>
 						<span style="white-space:nowrap;color:#999;">${symbol}</span>

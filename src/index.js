@@ -21,6 +21,16 @@ import './swaptox/swaptox-lang-choose/swaptox-lang-choose';
 import './swaptox/swaptox-wallet/swaptox-wallet';
 
 
+
+
+for (const network of Object.keys(networkData)) {
+	try {
+		getTokens(network);
+	} catch (err) {}
+}
+
+
+
 const _formatLanguagePack = function(customPack){
 	const newPack = {};
 	for (let key in customPack) {
@@ -124,7 +134,6 @@ export class SwaptoX {
 		}
 		this.$el.chain = currentlyChain;
 		sdkStore.setChain(currentlyChain);
-		getTokens(currentlyChain);//预加载代币列表
 		
 		
 		// 监听组件内部抛出的自定义事件
@@ -181,7 +190,7 @@ export class SwaptoX {
 		if(config.slippagLayout){
 			this.setSlippagLayout(config.slippagLayout);
 		}
-		if(config.swapButton){
+		if([true, false].indexOf(config.swapButton) !== -1){
 			this.setSwapButton(config.swapButton);
 		}
 		if(config.disabledHistoryIcon){
@@ -193,7 +202,9 @@ export class SwaptoX {
 		if(config.disabledChooseRoute){
 			this.setDisabledChooseRoute(config.disabledChooseRoute);
 		}
-		
+		if(config.smallScreenCardFull){
+			this.setSmallScreenCardFull(config.smallScreenCardFull);
+		}
 		
 		
 		
@@ -226,6 +237,7 @@ export class SwaptoX {
 		$app.safeSet(window, '$swaptoxWidget', this);
 		//console.log(sdkInfo.name, sdkInfo.version);
 		swaptoxConnect();
+		window.dispatchEvent(new CustomEvent('swaptox-widget-ready', {detail: window.$swaptoxWidget}));
 	}
 	
 	
@@ -235,6 +247,10 @@ export class SwaptoX {
 	}
 	setUserAddress(addr) {
 		const account = addr?addr:'';
+		if(account&&!viemUtils.isAddress(account)){
+			console.error('Account Not a valid address');
+			return;
+		}
 		this.$el.userAddress = account;
 		sdkStore.setAccount(account);
 	}
@@ -245,15 +261,20 @@ export class SwaptoX {
 		}
 		$app.setStorageSync('currently-selected-chain', chain);
 		this.$el.chain = chain;
+		sdkStore.setRoutes(undefined, false);
+		sdkStore.setErrRoute(undefined, false);
 		sdkStore.setChain(chain);
-		getTokens(chain);//预加载代币列表
+		getTokens(chain, false);//预加载代币列表
 	}
-	getChain(chain) {
+	getChains() {
 		const chainArr = [];
 		for (var key in networkData) {
 			chainArr.push(key);
 		}
 		return chainArr;
+	}
+	getChain() {
+		return this.$el.chain;
 	}
 	
 	
@@ -334,7 +355,10 @@ export class SwaptoX {
 	}
 	
 	
-	
+	setSmallScreenCardFull(e){
+		this.$el.smallScreenCardFull = e?true:false;
+		sdkStore.setSmallScreenCardFull(e?true:false);
+	}
 	
 	
 	
@@ -461,6 +485,8 @@ export class SwaptoX {
 		// 2. 从父元素中移除自己
 		if (this.$el.parentNode) {
 			this.$el.parentNode.removeChild(this.$el);
+		}else{
+			this.$el?.remove()
 		}
 
 		
@@ -472,6 +498,9 @@ export class SwaptoX {
 		this._onApproveCb = null;
 		this._onSwapCb = null;
 		this._onPermitCb = null;
+		
+		window.$swaptoxWidget = null;
+		window.dispatchEvent(new CustomEvent('swaptox-widget-destroy'));
 		console.log(sdkInfo.name, 'Destroyed');
 	}
 };

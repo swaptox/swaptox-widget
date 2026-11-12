@@ -108,7 +108,7 @@ export class StxBestRoute extends StoreMixin(LitElement) {
 			z-index: 1;
 			border-radius: 10px;
 			overflow: hidden;
-			display: var(--stxui-route-is-loading);
+			display: var(--stxui-route-is-loading, none);
 		}
 		.skeleton-css{}
 		.skeleton-css::after {

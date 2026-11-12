@@ -115,7 +115,8 @@ export class StxappAccountButton extends StoreMixin(LitElement) {
 			bubbles: false,
 			composed: false
 		}));
-		window.$swaptoxWidget.$el.openWallet();
+		//window.$swaptoxWidget.$el.openWallet();
+		document.querySelector('swaptox-wallet')?.open();
 	}
 	
 }

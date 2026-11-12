@@ -3,7 +3,11 @@
 import { appInfo } from '../app-config.js';
 import { networkData } from '../network-data.js';
 //import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
+//import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
+
+
+
+/* import mermaid from 'mermaid';
 mermaid.initialize({
 	startOnLoad: false,//页面启动还要询价才触发，所以不用马上加载
 	htmlLabels: true,//用于设置是否使用 HTML
@@ -34,7 +38,92 @@ mermaid.initialize({
 		lineColor: "#64748b00",
 		defaultLinkColor: "#64748b00",
 	}
-});
+}); */
+
+
+
+let mermaidLoadingPromise = null;
+
+async function loadMermaid() {
+    // 如果全局已经有了，直接返回
+    if (window.mermaid) {
+        return window.mermaid;
+    }
+
+    // 如果正在加载中，返回之前的 Promise
+    if (mermaidLoadingPromise) {
+        return mermaidLoadingPromise;
+    }
+
+    // 开始动态创建 script 标签引入 CDN
+    mermaidLoadingPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        // 使用 UMD 版本的 CDN，加载后会自动挂载到 window.mermaid
+        script.src = 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.min.js';
+        script.async = true;
+        
+        script.onload = () => {
+            resolve(window.mermaid);
+        };
+        script.onerror = (err) => {
+            mermaidLoadingPromise = null; // 失败重置
+            reject(err);
+        };
+
+        document.head.appendChild(script);
+    });
+
+    return mermaidLoadingPromise;
+}
+
+
+
+
+loadMermaid();
+let _mermaid = null;
+async function renderChart() {
+	if(_mermaid) return _mermaid;
+    const mermaid = await loadMermaid();
+	mermaid.initialize({
+		startOnLoad: false,//页面启动还要询价才触发，所以不用马上加载
+		htmlLabels: true,//用于设置是否使用 HTML
+		theme: 'neutral',
+		suppressErrorRendering: true,//关闭HTML错误渲染
+		
+		securityLevel: 'loose',//允许在文本中使用HTML标签，并启用点击功能
+		flowchart: { useMaxWidth: true, curve: 'basis'},
+		
+		themeCSS: `
+		    .labelBkg {
+		        background-color: transparent !important;
+		    }
+			.pool-name-css{
+				color: var(--stxui-theme-font-color, #111);
+			}
+		`,
+		themeVariables: {
+			// 全局
+			fontFamily: 'var(--stxui-font-family)',
+			fontSize: '16px',
+			
+			// 箭头文字
+			edgeLabelBackground: '#ffffff00',
+			textColor: '#64748b00',
+			
+			// 线路
+			lineColor: "#64748b00",
+			defaultLinkColor: "#64748b00",
+		}
+	});
+	_mermaid = mermaid;
+    return _mermaid;
+}
+
+
+
+
+
+
 
 
 
@@ -825,7 +914,7 @@ export async function getRouteTrend(chain, tokenIn, tokenOut, routeData, protoco
 	const renderId = 'swaptox-route';
 	ensureMermaidRenderStyle(renderId);
 
-	
+	const mermaid = await renderChart();
 	const { svg } = await mermaid.render(renderId, graphDefinition);
 	
 	const newSvg = replaceTokenImageShape(svg, tokenLOGOS);

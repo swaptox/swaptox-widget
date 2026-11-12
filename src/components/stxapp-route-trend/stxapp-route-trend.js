@@ -5,7 +5,7 @@ import {
 	css
 } from 'lit';
 
-import { getTokens } from '../../api/cloud/getTokens.js';
+import { allTokens } from '../../api/cloud/getTokenList.js';
 import { getProtocol } from '../../api/cloud/getProtocol.js';
 import { $app } from '../../js_sdk/index.js';
 import { sdkStore } from '../../data/store/store.js';
@@ -30,7 +30,27 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 	constructor() {
 		super();
 		this.optionalRoute = true;
+		
+		this._handleStateChange = (e) => {
+			const store = e.target;
+			if(store.chain!==this._chain){
+				this._chain = store.chain;
+				this._tokenObj = null;
+				this._preloadTokenList();
+			}
+		};
 	}
+
+    connectedCallback() {
+        super.connectedCallback();
+        sdkStore.addEventListener('sdk-state-changed', this._handleStateChange);
+    }
+    
+    disconnectedCallback() {
+        sdkStore.removeEventListener('sdk-state-changed', this._handleStateChange);
+        super.disconnectedCallback();
+    }
+
 
 	static styles = css`
 		:host {
@@ -68,7 +88,7 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 			color: var(--stxui-dark-theme-subcolor, #999);
 		}
 		.route-trend-modal-load{
-			display: var(--stxui-route-is-loading);
+			display: var(--stxui-route-is-loading, none);
 			position: absolute;top: 0;left: 20px;right: 20px;bottom: 0px;border-radius: 18px;overflow: hidden;
 		}
 		.route-trend-modal-load::after {
@@ -153,7 +173,7 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 			padding-bottom: 15px;
 		}
 		.output-text-load-skeleton-item{
-			display: var(--stxui-icon-switch-token-load);
+			display: var(--stxui-icon-switch-token-load, none);
 			position: absolute;
 			z-index: 5;
 			top: 0; right: 0; bottom: 0; left: 0;
@@ -250,7 +270,7 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 			<div class="stxapp-route-trend-x-bdoy" style="position:relative;">
 				${selectedRoute?html`
 					<div
-						style="opacity:var(--stxui-icon-arrow-loading-hide);min-width:680px;user-select:none;padding: 0px 20px;display:flex;justify-content:center;align-items:center;" 
+						style="opacity:var(--stxui-icon-arrow-loading-hide, 1);min-width:680px;user-select:none;padding: 0px 20px;display:flex;justify-content:center;align-items:center;" 
 						id="route-trend-svg"
 					></div>
 				`:html`
@@ -272,7 +292,7 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 					<div style="position:relative;height:56px;flex:1;">
 					
 						<div @click=${()=>{this._selectedRoute(item)}} 
-						style="padding: 12px 15px;padding-top: 15px;padding-bottom: 15px;opacity:var(--stxui-icon-arrow-loading-hide);"
+						style="padding: 12px 15px;padding-top: 15px;padding-bottom: 15px;opacity:var(--stxui-icon-arrow-loading-hide, 1);"
 						class="routes-choose-bg-border ${item.selected?'selected-route':''}">
 							
 							<div style="display: flex;flex-direction: row;align-items: center;column-gap:6px;">
@@ -345,7 +365,7 @@ export class StxappRouteTrend extends StoreMixin(LitElement) {
 			return this._tokenObj;
 		}
 		try {
-			const _tokenList = await getTokens(sdkStore.chain, false);
+			const _tokenList = await allTokens(sdkStore.chain);
 			if(_tokenList){
 				this._tokenObj = {};
 				for(let i = 0; i < _tokenList.length; i++){

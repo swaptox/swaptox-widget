@@ -85,6 +85,7 @@ export class StxWidget extends StoreMixin(LitElement) {
 			disabledHistoryIcon: { type: Boolean},
 			disabledCustomRecipient: { type: Boolean},
 			disabledChooseRoute: { type: Boolean},
+			smallScreenCardFull: { type: Boolean},
 			//_transactionDetailsData: { type: Object },
 		};
 	}
@@ -127,6 +128,7 @@ export class StxWidget extends StoreMixin(LitElement) {
 		this.outputTokenSelectLoading = false;
 		
 		this.disabledHistoryIcon = false;
+		this.smallScreenCardFull = false;
 		//this._transactionDetailsData = {};
 		this.detectPermitMethods();
 	}
@@ -420,6 +422,18 @@ export class StxWidget extends StoreMixin(LitElement) {
 					border-top-width: var(--stxui-card-border-width, 1px);
 					border-top-color: var(--stxui-card-border-color, #fff);
 				}
+				.stx-container-full{}
+				@media (max-width: 520px) {
+					.stx-container-full {
+						border-radius: 0px;
+						border-right-width:0px;
+						border-left-width:0px;
+						border-top-width:0px;
+						/*width: 100%;
+						min-width: 100%;*/
+					}
+				}
+				
 				
 				.stx-card-title {
 					font-size: 18px;
@@ -511,7 +525,7 @@ export class StxWidget extends StoreMixin(LitElement) {
 				?open=${this.openRouteView}
 			>
 				<stxapp-route-trend 
-					?optionalRoute=${!this.disabledChooseRoute}
+					.optionalRoute=${!this.disabledChooseRoute}
 					@close=${()=>{this.openRouteView = false;}}
 				></stxapp-route-trend>
 			</stxapp-route-trend-modal>
@@ -556,7 +570,7 @@ export class StxWidget extends StoreMixin(LitElement) {
 		
 		
 		
-			<div class="stx-container">
+			<div class="stx-container ${this.smallScreenCardFull?'stx-container-full':''}">
 				<stxapp-tips id="swapTips"></stxapp-tips>
 		  
 				<div class="header">
@@ -698,10 +712,10 @@ export class StxWidget extends StoreMixin(LitElement) {
 			</stxapp-swap-confirm-modal>
 			
 			
-			<swaptox-wallet id="swaptox-wallet-modal"></swaptox-wallet>
+			
 		`;
 	}
-	
+	//<swaptox-wallet id="swaptox-wallet-modal"></swaptox-wallet>
 	
 	
 	//打开交易详情
@@ -1038,9 +1052,9 @@ export class StxWidget extends StoreMixin(LitElement) {
 		}));
 		window?.$swaptoxConnect?.open();
 	}
-	openWallet(){
-		this.shadowRoot.querySelector('#swaptox-wallet-modal').open();
-	}
+	/* openWallet(){
+		//this.shadowRoot.querySelector('#swaptox-wallet-modal').open();
+	} */
 	
 	
 	_chooseRoute(data, isNotify=true){
@@ -1066,3 +1080,21 @@ export class StxWidget extends StoreMixin(LitElement) {
 if (!customElements.get('swaptox-widget')) {
 	customElements.define('swaptox-widget', StxWidget);
 }
+
+
+
+
+
+
+
+/*
+
+
+
+npm run build
+npm pack --dry-run
+npm publish --access public
+
+
+
+*/

@@ -47,9 +47,16 @@ class SDKStore extends EventTarget {
 		
 		
 		this.walletLogo = '';
-		
+		this.smallScreenCardFull = false;
 		
     }
+	
+	setSmallScreenCardFull(e){
+		this.smallScreenCardFull = e;
+		this._notify();
+	}
+	
+	
 	
 	updateSwapHash(chain, hash, status) {
 		if (!this.swapHash[chain]) {

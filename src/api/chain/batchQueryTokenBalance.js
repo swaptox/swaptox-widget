@@ -43,7 +43,7 @@ export async function batchQueryTokenBalance(chain, data) {
 			});
 		} catch (error) {
 			//throw error;
-			console.error(functionName, error, chain, data);
+			//console.error(functionName, error, chain, data);
 		}
 	}
 	

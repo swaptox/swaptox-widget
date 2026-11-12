@@ -72,7 +72,30 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 		};
 	}
 	
-	
+	firstUpdated() {
+		if(sdkStore.account){
+			this._account = sdkStore.account;
+		}else{
+			let jishu = 0;
+			const intervalID = setInterval(()=>{
+				jishu++;
+				if(this.transactionsList&&this.transactionsList.length>0){
+					clearInterval(intervalID);
+					return;
+				}
+				if(sdkStore.account){
+					clearInterval(intervalID);
+					this._resetList();
+					return;
+				}
+				if(jishu>=100){
+					clearInterval(intervalID);
+					return;
+				}
+			}, 100);
+		}
+	    this._resetList();
+	}
 	
 	_checkUpdates(){
 		let num = 0;
@@ -105,7 +128,7 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 	}
 	
 	async _getTransactionsList() {
-		if(!this._account){
+		if(!sdkStore.account){
 			this.loading = false;
 			this.isError = false;
 			this._total = 0;
@@ -117,7 +140,7 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 		const result = await getTransaction({
 			page: this._currentPage,
 			size: this._pageSize,
-			account: this._account,
+			account: sdkStore.account,
 			chain: this._chain,
 		});
 		if(result&&result.list){
@@ -134,10 +157,10 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 		const xinArr = [];
 		for(let i = 0; i < list.length; i++){
 			const data = list[i];
-			
-			const newObj = await _initTransactionData(data, sdkStore.priceBehalf);
-			xinArr.push(newObj);
-			
+			try {
+				const newObj = await _initTransactionData(data, sdkStore.priceBehalf);
+				xinArr.push(newObj);
+			} catch (e) {}
 			if(data.status==='pending'){
 				try {
 					const stateModal = document.querySelector('swaptox-mini-swap-state');
@@ -235,10 +258,18 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 			border-top: 1px solid var(--stxui-card-line-color, #eee);
 		}
 		
-		
+		.swaptox-full{}
 		@media (max-width: 520px) {
 			.gongdong-div {
 				max-height: calc(100vh - 211px);
+			}
+			.swaptox-full{
+				border-radius: 0px;
+				border-right-width:0px;
+				border-left-width:0px;
+				border-top-width:0px;
+				/*width: 100%;
+				min-width: 100%;*/
 			}
 		}
 		@media (max-height: 500px) {
@@ -312,9 +343,11 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 	render() {
 		const $t = sdkStore.$t;
 		
-		const transactions = [...this.transactionsList];
+		//const transactions = Array.isArray(this.transactionsList)?[...this.transactionsList]:[];
 		
-		if(!transactions||transactions.length===0){
+		//const transactions = [...this.transactionsList];
+		
+		if(!this.transactionsList||this.transactionsList.length===0){
 			if(!this.isModal){
 				return null;
 			}
@@ -329,7 +362,7 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 		return html`
 		
 		
-			<div @click=${(e)=>e.stopPropagation()} class="${this.isModal?'swaptox-transactions-record-modal':'swaptox-transactions-record'}" 
+			<div @click=${(e)=>e.stopPropagation()} class="${this.isModal?'swaptox-transactions-record-modal':sdkStore.smallScreenCardFull?'swaptox-transactions-record swaptox-full':'swaptox-transactions-record'}" 
 			style="padding: 12px 0px;padding-bottom: 15px;
 			${this.isModal?'padding-top: 12px;':'padding-top: 10px;'}${this.styles}">
 				
@@ -353,7 +386,7 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 				
 				
 				
-				${transactions.length>0?html`
+				${this.transactionsList?.length>0?html`
 					
 					<div style="${this.isModal?'height:12px;':'height:10px;'}"></div>
 					
@@ -370,7 +403,7 @@ export class StxappTransactionsRecord extends StoreMixin(LitElement) {
 							`:null}
 							
 						
-							${transactions.map(
+							${this.transactionsList.map(
 								(item) => html`
 									<stxcom-transactions-item
 										.item=${item}

@@ -150,7 +150,7 @@ export class StxRouteView extends StoreMixin(LitElement) {
 		
 		
 		.jiazai-route-body{
-			display: var(--stxui-route-is-loading);
+			display: var(--stxui-route-is-loading, none);
 			position: absolute;
 			top: -1px;
 			left: -1px;

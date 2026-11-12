@@ -137,6 +137,7 @@
 								<div class="actions">
 									<button class="btn" id="chainBase" data-i18n="baseChain">Base 链</button>
 									<button class="btn" id="chainRootstock" data-i18n="rootstockChain">Rootstock 链</button>
+									<button class="btn subtle" id="getChain">getChain</button>
 									<button class="btn subtle" id="getChains" data-i18n="getChains">读取支持的链</button>
 								</div>
 							</div>
@@ -238,10 +239,17 @@
 					<div class="log-box" id="eventLog" aria-live="polite"><div class="log-empty" data-i18n="waitingEvents">等待 SDK 事件……</div></div>
 				</section>
 			</div>
+			
+			<!-- <div>
+			<swaptox-routes-choose></swaptox-routes-choose>
+			<swaptox-transactions-record></swaptox-transactions-record>
+			</div> -->
+			
 			<div class="footer" data-i18n="footer">SwaptoX Mini SDK · Demo</div>
 		</main>
 
 		<script type="module">
+			//import { createWidget } from 'https://esm.sh/@swaptox/widget';
 			import { createWidget } from './src/index.js';
 
 			const messages = {
@@ -281,6 +289,7 @@
 				chain: 'base',
 				lang: 'zh-Hans',
 				isUpdateHtmlLang: true,
+				//smallScreenCardFull: true,
 				theme: 'light',
 				userAddress: '',
 				languagePack: {
@@ -429,7 +438,8 @@
 			document.getElementById('clearAddress').addEventListener('click', () => instance.setUserAddress(''));
 			document.getElementById('chainBase').addEventListener('click', () => instance.setChain('base'));
 			document.getElementById('chainRootstock').addEventListener('click', () => instance.setChain('rootstock'));
-			document.getElementById('getChains').addEventListener('click', () => console.log('[SDK getChain]', instance.getChain()));
+			document.getElementById('getChains').addEventListener('click', () => console.log('[SDK getChains]', instance.getChains()));
+			document.getElementById('getChain').addEventListener('click', () => console.log('[SDK getChain]', instance.getChain()));
 
 			document.querySelectorAll('[data-lang]').forEach((button) => button.addEventListener('click', () => instance.setLang(button.dataset.lang)));
 			document.getElementById('getLangPack').addEventListener('click', () => console.log('[SDK getLangPack]', instance.getLangPack()));

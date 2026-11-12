@@ -43,14 +43,6 @@ Add a mount element to your page, then create the widget in the browser:
 </script>
 ```
 
-You can also use the class constructor:
-
-```js
-import { SwaptoX } from '@swaptox/widget';
-
-const widget = new SwaptoX({ container: '#swaptox-widget' });
-```
-
 ### Pairing with SwaptoX Connect
 
 The widget can be paired with [`@swaptox/connect-ui`](https://github.com/swaptox/swaptox-connect) for wallet connection. Install it with npm:
@@ -279,14 +271,6 @@ import { createWidget } from 'https://esm.sh/@swaptox/widget';
 
   widget.on('swap', (data) => console.log('swap:', data));
 </script>
-```
-
-也可以使用构造函数：
-
-```js
-import { SwaptoX } from '@swaptox/widget';
-
-const widget = new SwaptoX({ container: '#swaptox-widget' });
 ```
 
 ### 搭配 SwaptoX Connect 使用

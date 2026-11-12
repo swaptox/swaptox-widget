@@ -220,6 +220,10 @@ export class SwaptoxWallet extends LitElement/*StoreMixin()*/ {
             bubbles: true,
             composed: true
         }));
+		
+		this._dialog = this.renderRoot.querySelector('dialog');
+		this._dialog.addEventListener('close', this._onDialogClose);
+		this._dialog.close();
     }
 
     _lockScroll() {
@@ -261,3 +265,51 @@ export class SwaptoxWallet extends LitElement/*StoreMixin()*/ {
 if (!customElements.get('swaptox-wallet')) {
     customElements.define('swaptox-wallet', SwaptoxWallet);
 }
+
+
+
+
+
+
+// 自动挂载，确保全局只有一个实例
+function mountSwaptoxWalletModal() {
+
+	if (!document.body) return;
+
+	const elements = document.querySelectorAll(
+		'swaptox-wallet'
+	);
+
+	let instance = elements[0];
+
+	// 清理重复实例
+	for (let i = 1; i < elements.length; i++) {
+		elements[i].remove();
+	}
+
+	if (!instance) {
+		instance = document.createElement(
+			'swaptox-wallet'
+		);
+	}
+
+	if (instance.parentElement !== document.body) {
+		document.body.appendChild(instance);
+	}
+
+	return instance;
+}
+
+
+if (document.body) {
+	mountSwaptoxWalletModal();
+} else {
+	document.addEventListener(
+		'DOMContentLoaded',
+		mountSwaptoxWalletModal,
+		{ once: true }
+	);
+}
+
+
+

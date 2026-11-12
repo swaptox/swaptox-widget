@@ -25,7 +25,7 @@ export async function permit(chain, obj, {permit_type, typedData}) {
 	
 	
 	if(window.$swaptoxConnect){
-		const { provider } = await window.$swaptoxConnect.checkConnect();
+		const { provider } = await window.$swaptoxConnect.checkConnect(chain);
 		try {
 			const signature = await provider.request(typedData);
 			const permitData = encodePermit({

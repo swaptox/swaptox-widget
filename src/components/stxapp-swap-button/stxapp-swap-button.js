@@ -65,19 +65,19 @@ export class StxappSwapButton extends StoreMixin(LitElement) {
 			? html`
 			
 			
-			<stxapp-button styles="display:var(--stxui-icon-switch-token-load);"
+			<stxapp-button styles="display:var(--stxui-icon-switch-token-load, none);"
 				.disabled="${true}"
 				type="primary" 
 			>${$t['loading']}</stxapp-button>
 			
 			
 			${isInsufficientBalance?html`
-				<stxapp-button styles="display:var(--stxui-icon-switch-token-open);"
+				<stxapp-button styles="display:var(--stxui-icon-switch-token-open, flex);"
 					.disabled="${true}"
 					type="primary" 
 				>${insufficientBalanceText}</stxapp-button>
 			`:html`
-				<stxapp-button styles="display:var(--stxui-icon-switch-token-open);"
+				<stxapp-button styles="display:var(--stxui-icon-switch-token-open, flex);"
 					.disabled="${inputAmount&&route&&insufficientLiquidity===false&&isNO_ROUTE===false?false:true}"
 					type="primary" 
 					@_click=${this._swap}

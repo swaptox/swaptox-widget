@@ -40,7 +40,7 @@ export async function transactionSend(chain, obj) {
 	
 	
 	if(window.$swaptoxConnect){
-		const { provider } = await window.$swaptoxConnect.checkConnect();
+		const { provider } = await window.$swaptoxConnect.checkConnect(chain);
 		try {
 			const txHash = await provider.request({
 				method: 'eth_sendTransaction',
